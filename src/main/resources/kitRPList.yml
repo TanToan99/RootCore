@@ -1,0 +1,28 @@
+"1":
+  name: Building
+  url: ""
+  kits:
+    "anhhung":
+      customname: "voo sonnggg"
+      url: ""
+      price: 10
+      des: "Mô tả kit \n bla bla bla bla \n bla bla bla"
+    "vosong":
+      customname: "voo sonnggg"
+      url: ""
+      price: 10
+      des: "Mô tả kit \n bla bla bla bla \n bla bla bla"
+"2":
+  name: Building
+  url: ""
+  kits:
+    "anhhung":
+      customname: "voo sonnggg"
+      url: ""
+      price: 10
+      des: "Mô tả kit \n bla bla bla bla \n bla bla bla"
+    "vosong":
+      customname: "voo sonnggg"
+      url: ""
+      price: 10
+      des: "Mô tả kit \n bla bla bla bla \n bla bla bla"

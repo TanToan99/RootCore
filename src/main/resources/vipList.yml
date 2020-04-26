@@ -1,0 +1,14 @@
+"vip":
+  customname: vip
+  des: "Mô tả rank"
+  day: 30
+  rpvv: 150
+  rp: 150
+  url: ""
+"vip+":
+  customname: vip+
+  des: "Mô tả rank"
+  day: 30
+  rpvv:
+  rp: 300
+  url: ""

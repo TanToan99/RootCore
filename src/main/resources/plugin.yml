@@ -1,0 +1,46 @@
+name: "RootCore"
+version: 1.0.0
+api: ["1.0.8"]
+author: "TanToan99"
+description: "RootCore for RootNetWorld - Minecraft BE Server"
+main: rootmc.net.rootcore.RootCore
+
+commands:
+  vip:
+    description: "Lệnh mua VIP"
+    usage: "/vip"
+    permission: rootcore.command.info
+    permission-message: "You do not have the required permission to run /vip"
+  shoprp:
+    description: "Shop Root Point "
+    usage: "/shoprp"
+    permission: rootcore.command.info
+    permission-message: "You do not have the required permission to run /shoprp"
+  event:
+    description: "Xem thông tin các sự kiện"
+    usage: "/event"
+    permission: rootcore.command.info
+    permission-message: "You do not have the required permission to run /event"
+  info:
+    description: "Hướng dẫn cơ bản trong server"
+    usage: "/info"
+    permission: rootcore.command.info
+    permission-message: "You do not have the required permission to run /info"
+
+permissions:
+  rootcore.*:
+    default: false
+    children:
+      rootcore.rank.*:
+        default: op
+      rootcore.vipjoin:
+        default: op
+      rootcore.vipland:
+        default: op
+      rootcore.command.*:
+        default: op
+        children:
+          rootcore.command.rp:
+            default: true
+          rootcore.command.info:
+            default: true
