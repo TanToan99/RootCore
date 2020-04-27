@@ -45,4 +45,9 @@ public class BuyScreen extends FormWindowCustom implements Screen {
             }
         }
     }
+
+    @Override
+    public void onClose(Player player) {
+
+    }
 }

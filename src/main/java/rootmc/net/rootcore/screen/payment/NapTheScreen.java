@@ -1,5 +1,6 @@
 package rootmc.net.rootcore.screen.payment;
 
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.element.ElementDropdown;
@@ -45,6 +46,11 @@ public class NapTheScreen extends FormWindowCustom implements Screen {
         List<String> data = Arrays.asList(nhamang, menhgia, pin, seri);
         event.getPlayer().sendMessage("§r[§l§4Root§r§lPoint§r] Đang xử lý thẻ, vui lòng đợi trong giây lát");
         Server.getInstance().getScheduler().scheduleAsyncTask(new NapTheAsyncTask(data, event.getPlayer().getName()));
+    }
+
+    @Override
+    public void onClose(Player player) {
+
     }
 
     public static boolean isNumeric(final Object str) {

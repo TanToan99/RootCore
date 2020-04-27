@@ -1,5 +1,6 @@
 package rootmc.net.rootcore.screen.shop;
 
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.element.ElementButton;
@@ -48,6 +49,11 @@ public class BuyKitSelectorScreen extends FormWindowSimple implements Screen {
         }
         BuyKitButton button = (BuyKitButton) getResponse().getClickedButton();
         event.getPlayer().showFormWindow(new BuyScreen(button.getKey(), button.getCustomName(), button.getPrice(), rp, button.getDes()));
+    }
+
+    @Override
+    public void onClose(Player player) {
+
     }
 
 }

@@ -1,5 +1,6 @@
 package rootmc.net.rootcore.screen.payment;
 
+import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.window.FormWindowSimple;
@@ -26,5 +27,10 @@ public class CKPaymentInfoScreen extends FormWindowSimple implements Screen {
         if (clickedButtonId == 0) {
             event.getPlayer().showFormWindow(new PaymentMethodScreen());
         }
+    }
+
+    @Override
+    public void onClose(Player player) {
+
     }
 }

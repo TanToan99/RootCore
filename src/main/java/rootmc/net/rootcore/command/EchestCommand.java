@@ -13,8 +13,6 @@ import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.plugin.Plugin;
-import rootmc.net.rootcore.screen.EventScreen;
-import rootmc.net.rootcore.screen.JoinScreen;
 
 public class EchestCommand extends PluginCommand<Plugin> implements CommandExecutor {
 

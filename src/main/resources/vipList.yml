@@ -2,6 +2,7 @@
   customname: vip
   des: "Mô tả rank"
   day: 30
+  level: 1
   rpvv: 150
   rp: 150
   url: ""
@@ -9,6 +10,7 @@
   customname: vip+
   des: "Mô tả rank"
   day: 30
+  level: 2
   rpvv:
   rp: 300
   url: ""

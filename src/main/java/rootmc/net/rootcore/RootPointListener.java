@@ -1,7 +1,6 @@
 package rootmc.net.rootcore;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
@@ -13,7 +12,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.network.protocol.LoginPacket;
 import cn.nukkit.scheduler.Task;
 import me.onebone.economyapi.EconomyAPI;
-import rootmc.net.rootcore.screen.JoinScreen;
+import rootmc.net.rootcore.screen.info.screen.GameType;
 import rootmc.net.rootcore.screen.Screen;
 
 import java.util.Map;
@@ -29,8 +28,12 @@ public class RootPointListener implements Listener {
     
     @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
     public void onFormResponse(PlayerFormRespondedEvent event) {
-        if (event.getResponse() == null) return;
         if (!(event.getWindow() instanceof Screen)) return;
+        if (event.wasClosed()){
+            ((Screen)event.getWindow()).onClose(event.getPlayer());
+            return;
+        }
+        if (event.getResponse() == null) return;
         ((Screen)event.getWindow()).onResponse(event);
     }
 
@@ -54,12 +57,6 @@ public class RootPointListener implements Listener {
                 plugin.getRootPointManager().createAccount(event.getPlayer());
             }
         });
-        plugin.getServer().getScheduler().scheduleDelayedTask(new Task() {
-            @Override
-            public void onRun(int i) {
-                event.getPlayer().showFormWindow(new JoinScreen());
-            }
-        }, 80);
     }
 
     //fix and me commmand
@@ -221,18 +218,8 @@ public class RootPointListener implements Listener {
         Player player = event.getPlayer();
         if(player.hasPermission("rootcore.rank.king") || player.hasPermission("rootcore.rank.king+") || player.hasPermission("rootcore.rank.vip+") || player.hasPermission("rootcore.rank.vip")){
             String itemName = player.getInventory().getItemInHand().getName();
-            event.setMessage(event.getMessage().replace("§","").replace("@xem","§b§l"+ itemName+"§r§f"));
-        }else{
-            event.setMessage(event.getMessage().replace("§",""));
+            event.setMessage(event.getMessage().replace("@xem","§b§l"+ itemName+"§r§f"));
         }
     }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerKick(PlayerKickEvent e){
-        Player player = e.getPlayer();
-        if(e.getReason().equals("SERVER_FULL") && player.hasPermission("rootcore.rank.king+")){
-            e.setCancelled(true);
-        }
-    }
-
+    //TODO: rewrite full slot vip join
 }

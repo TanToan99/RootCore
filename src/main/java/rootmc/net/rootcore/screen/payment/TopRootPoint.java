@@ -31,5 +31,10 @@ public class TopRootPoint extends FormWindowCustom implements Screen {
         }
     }
 
+    @Override
+    public void onClose(Player player) {
+
+    }
+
 
 }

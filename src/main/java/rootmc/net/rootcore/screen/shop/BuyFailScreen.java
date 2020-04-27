@@ -1,5 +1,6 @@
 package rootmc.net.rootcore.screen.shop;
 
+import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.element.ElementButtonImageData;
@@ -18,5 +19,10 @@ public class BuyFailScreen extends FormWindowSimple implements Screen {
 
     public void onResponse(PlayerFormRespondedEvent event) {
         event.getPlayer().showFormWindow(new BuyCategoriesScreen(RootCore.get().getRootPointManager().myRootPoint(event.getPlayer().getUniqueId())));
+    }
+
+    @Override
+    public void onClose(Player player) {
+
     }
 }

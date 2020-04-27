@@ -1,18 +1,30 @@
 # Note: You need to create the database before setting this up.
-
 mysql:
-  ip: 34.87.27.102
+  ip: rootmc.net
   port: 3306
   database: "minecraftbe"
   username: "root"
   password: "matkhau8kytu"
 #tinh theo %
-discount: 150
-fix: false
-joinscreen:
-  title: "RootSkyBlock"
-  des: "sdfsdfsdfsdfsdf"
+discount: 100
 
-eventscreen:
-  title: "RootSkyBlock"
-  des: "sdfsdfsdfsdfsdf"
+fix: false
+
+gameType: "§l§4Lối chơi: SkyBlock §flà lối chơi sinh tồn và xây dựng trên một hòn đảo nổi. Đòi hỏi kỹ năng và kinh nghiệm sinh tồn pro của bạn. Xây dựng đảo, nâng cấp và phát triển thức ăn."
+
+basicCommand: "§6Lệnh server cơ bản:§f
+               \n♢§6/rp : §fbảng chức năng nạp thẻ, mua vip
+               \n♢§6/event: §fDanh sách sự kiện, đua top
+               \n♢§6/tpa: §fTeleport đến người chơi khác
+               \n♢§6/warp: §fcác warp cơ bản shop,pvp
+               \n♢§6/hub:§f quay trở về sảnh
+               \n♢§6/lobby:§f quay trở về server Lobby
+               \n\n§6Các lệnh SkyBlock cơ bản:§f
+               \n♢§6/is:§f vào đảo cuả bạn
+               \n♢§6/is sethome: §fđánh dấu vị trí mỗi khi quay về đảo
+               \n♢§6/is calc: §fTính level đảo dựa theo số block trên đảo
+               \n♢§6/is invite: §fmời người chơi vào đảo
+               \n♢§6/is kickmember: §fkick người chơi khỏi team
+               \n♢§6/is quit: §frời khỏi team của bạn"
+
+events: "sdfsdfsdfsdfsdf"

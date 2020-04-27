@@ -7,7 +7,6 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.PluginCommand;
 import cn.nukkit.plugin.Plugin;
 import rootmc.net.rootcore.RootCore;
-import rootmc.net.rootcore.screen.MenuScreen;
 
 public class RPCommand extends PluginCommand<Plugin> implements CommandExecutor {
 
@@ -85,7 +84,7 @@ public class RPCommand extends PluginCommand<Plugin> implements CommandExecutor 
 
         Player player = sender.getServer().getPlayer(sender.getName());
         if (player != null){
-            player.showFormWindow(new MenuScreen(player.getUniqueId()));
+            //player.showFormWindow(new MenuScreen(player.getUniqueId()));
         }
         return true;
     }
