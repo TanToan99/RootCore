@@ -35,7 +35,7 @@ public class BuyScreen extends FormWindowCustom implements Screen {
         if (getResponse().getStepSliderResponse(4).getElementID() == 0) {
             player.showFormWindow(new BuyCategoriesScreen(prp));
         } else {
-            if (RootCore.get().getRootPointManager().reduceRootPoint(player, price) == RootPointManager.RET_SUCCESS) {
+            if (RootCore.get().getRootPointManager().reduceRootPoint(player, price) == 1) {
                 Kit kit = Main.instance.getKit(key);
                 kit.addTo(player);
                 player.showFormWindow(new BuySuccessScreen());
@@ -48,6 +48,7 @@ public class BuyScreen extends FormWindowCustom implements Screen {
 
     @Override
     public void onClose(Player player) {
-
+        int prp = RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId());
+        player.showFormWindow(new BuyCategoriesScreen(prp));
     }
 }

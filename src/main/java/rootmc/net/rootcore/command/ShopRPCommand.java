@@ -23,7 +23,8 @@ public class ShopRPCommand extends PluginCommand<Plugin> implements CommandExecu
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         if (!(sender instanceof Player)) return true;
         Player player = (Player)sender;
-        player.showFormWindow(new BuyCategoriesScreen(RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId())));
+        int rp = RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId());
+        player.showFormWindow(new BuyCategoriesScreen(rp));
         return true;
     }
 }

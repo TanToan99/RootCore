@@ -38,14 +38,14 @@ public class EchestCommand extends PluginCommand<Plugin> implements CommandExecu
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         if (!(sender instanceof Player)) return true;
-            sender.sendMessage("Lệnh đang được fix");
+            sender.sendMessage("Lệnh sẽ được update trong thời gian tới");
         //sendEnderChestInventory((Player)sender);
         return true;
     }
 
     private void sendEnderChestInventory(Player player) {
         Block block = Block.get(Block.ENDER_CHEST);
-        player.getLevel().setBlock(new Vector3(player.x, player.y - 2, player.z), block, true, true);
+        player.getLevel().setBlock(new Vector3(player.x, player.y + 2, player.z), block, true, true);
         Position pos = new Position( (int) Math.floor(player.x), (int) Math.floor(player.y) - 2, (int) Math.floor(player.z),player.getLevel());
         CompoundTag nbt = BlockEntity.getDefaultCompound(pos, BlockEntity.ENDER_CHEST);
         BlockEntityEnderChest chest;
@@ -53,4 +53,6 @@ public class EchestCommand extends PluginCommand<Plugin> implements CommandExecu
         player.setViewingEnderChest((BlockEnderChest) block);
         player.addWindow(player.getEnderChestInventory());
     }
+
+
 }

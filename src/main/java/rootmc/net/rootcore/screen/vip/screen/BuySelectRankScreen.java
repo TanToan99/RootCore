@@ -37,14 +37,16 @@ public class BuySelectRankScreen extends FormWindowCustom implements Screen {
         int idResponse = getResponse().getStepSliderResponse(1).getElementID();
         switch (idResponse) {
             case 0:
-                player.showFormWindow(new ListVipScreen(event.getPlayer().getUniqueId()));
+                int rpp = RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId());
+                player.showFormWindow(new ListVipScreen(rpp));
                 break;
             case 1:
                 UUID uuid = player.getUniqueId();
                 ConfigSection cSection = RootCore.rankCfg.getSection(key);
                 int rp = cSection.getInt("rp");
-                if (RootCore.get().getRootPointManager().reduceRootPoint(uuid, rp, true) == RootPointManager.RET_SUCCESS) {
+                if (RootCore.get().getRootPointManager().reduceRootPoint(uuid, rp, true) == 1) {
                     player.sendMessage("Mua rank thành công ");
+                    //todo: rewrite
                     Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " clear");
                     Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " parent addtemp " + key + " " + cSection.getInt("day") + "d");
                     RootCore.get().getProvider().add_transaction(player.getName(), "SB_RANK", key + " - " + cSection.getInt("day"), rp, RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
@@ -53,7 +55,7 @@ public class BuySelectRankScreen extends FormWindowCustom implements Screen {
                 }
                 break;
             case 2:
-                player.sendMessage("Tạm thời muốn mua rank vĩnh viễn liên hệ Admin Discord hoặc Fanpage");
+                //TODO: write
                 break;
         }
     }
