@@ -9,7 +9,7 @@ import rootmc.net.rootcore.screen.vip.MenuVipScreen;
 public class VipHelpScreen extends FormWindowSimple implements Screen {
 
     public VipHelpScreen() {
-        super("§c§lRoot§r§lNetworκ §r- §aV§eI§cP", "");
+        super("§c§lRoot§r§lNetworκ §7- §aV§eI§cP", "");
         setContent("§l§fQuy định mua vip:\n\n" +
                 "» §fCó 2 loại:§f VIP Vĩnh viễn và VIP 30 ngày\n\n" +
                 "» §fVIP 30 ngày khi chuyển gói 30 mới sẽ mất gói 30 ngày cũ\n\n" +

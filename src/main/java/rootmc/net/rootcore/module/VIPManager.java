@@ -26,7 +26,7 @@ public class VIPManager {
         Config rankCfg = new Config(new File(plugin.getDataFolder(), "vipList.yml"));
         for (String key : rankCfg.getKeys(false)) {
             ConfigSection cSection = rankCfg.getSection(key);
-            rankDatas.add(new RankData(key, cSection.getString("des"), cSection.getString("customname"), cSection.getInt("day"), cSection.getInt("level"), cSection.getInt("rp"), cSection.getInt("rpvv"), cSection.getString("url")));
+            rankDatas.add(new RankData(key, cSection.getString("customname"), cSection.getString("des"), cSection.getInt("day"), cSection.getInt("level"), cSection.getInt("rp"), cSection.getInt("rpvv"), cSection.getString("url")));
         }
 
         Config vipData = new Config(new File(plugin.getDataFolder(), "vipData.yml"));
@@ -55,12 +55,28 @@ public class VIPManager {
     }
 
     public boolean canBuyLevel(String playerName, int level) {
-        if (level == 1) return true;
+        if (!playerRankLv.containsKey(playerName) && level == 1) return true;
         return playerRankLv.containsKey(playerName) && (level == 1 + playerRankLv.get(playerName));
     }
 
     public void writeData(String playerName, int level) {
         playerRankLv.put(playerName, level);
         saveData();
+    }
+
+    public boolean hasRankF(String playerName) {
+        return playerRankLv.containsKey(playerName);
+    }
+
+    public String getrankF(String playerName) {
+        return getRankKeyF(playerRankLv.get(playerName)); //need check not null
+    }
+
+    public String getRankKeyF(int level) {
+        RankData rank = rankDatas.stream().filter(i -> i.getLevel() == level).findFirst().orElse(null);
+        if (rank != null) {
+            return rank.getKey();
+        }
+        return "";
     }
 }

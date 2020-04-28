@@ -21,7 +21,7 @@ public class RankData {
     @Getter
     private final String cusName;
 
-    public RankData(String key,String cusName, String des, int day, int level, int rp, int rpvv, String url){
+    public RankData(String key, String cusName, String des, int day, int level, int rp, int rpvv, String url) {
         this.key = key;
         this.cusName = cusName;
         this.des = des;
@@ -31,6 +31,5 @@ public class RankData {
         this.rpvv = rpvv;
         this.url = url;
     }
-
 
 }
