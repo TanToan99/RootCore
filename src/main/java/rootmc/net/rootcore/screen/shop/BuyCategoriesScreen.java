@@ -17,9 +17,6 @@ public class BuyCategoriesScreen extends FormWindowSimple implements Screen {
             String url = RootCore.shopCfg.getSection(key).getString("url");
             addButton(new CategoryButton(key, categoryName, url));
         }
-        if (getButtons().size() == 1) {
-            setContent("☆ §l§eKhông có cái gì để mua ");
-        }
     }
 
     public void onResponse(PlayerFormRespondedEvent event) {

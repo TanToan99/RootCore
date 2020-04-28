@@ -22,6 +22,8 @@ permissions:
       rootcore.command.*:
         default: op
         children:
+          rootcore.command.vip:
+            default: true
           rootcore.command.shoprp:
             default: true
           rootcore.command.rp:

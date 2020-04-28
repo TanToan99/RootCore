@@ -63,7 +63,7 @@ public class RootPointListener implements Listener {
             public void onRun(int i) {
                 event.getPlayer().showFormWindow(new NoticeScreen("§c§lRoot§r§lNetworκ §r® Update",RootCore.get().getConfig().getString("update")));
             }
-        }, 80);
+        }, 40); //fix form other does not work
     }
 
     //fix and me commmand
