@@ -6,8 +6,8 @@ import cn.nukkit.command.CommandExecutor;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.PluginCommand;
 import cn.nukkit.plugin.Plugin;
-import rootmc.net.rootcore.screen.EventScreen;
-import rootmc.net.rootcore.screen.info.MenuInfo;
+import rootmc.net.rootcore.RootCore;
+import rootmc.net.rootcore.screen.NoticeScreen;
 
 public class EventCommand extends PluginCommand<Plugin> implements CommandExecutor {
 
@@ -22,7 +22,7 @@ public class EventCommand extends PluginCommand<Plugin> implements CommandExecut
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         if (!(sender instanceof Player)) return true;
-        ((Player) sender).showFormWindow(new EventScreen());
+        ((Player) sender).showFormWindow(new NoticeScreen("§c§lRoot§r§lNetworκ §r® Sự kiện",RootCore.get().getConfig().getString("events")));
         return true;
     }
 }

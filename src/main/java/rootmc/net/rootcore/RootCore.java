@@ -5,6 +5,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.utils.Config;
 import rootmc.net.rootcore.command.*;
 import rootmc.net.rootcore.module.RootPointManager;
+import rootmc.net.rootcore.module.VIPManager;
 import rootmc.net.rootcore.provider.MysqlProvider;
 import rootmc.net.rootcore.provider.Provider;
 
@@ -16,7 +17,7 @@ public class RootCore extends RootCoreAPI implements Listener {
     private static RootCore instance;
     private final HashMap<String, Class<?>> providerClass = new HashMap<>();
     public HashMap<UUID, Long> commandMeCache = new HashMap<>();
-    public static Config shopCfg, rankCfg;
+    public static Config shopCfg;
 
     @Override
     public void onLoad() {
@@ -35,6 +36,7 @@ public class RootCore extends RootCoreAPI implements Listener {
         getServer().getPluginManager().registerEvents(new RootPointListener(this), this);
         selectProvider();
         rootPointManager = new RootPointManager(this);
+        vipManager = new VIPManager(this);
     }
 
 
@@ -43,7 +45,6 @@ public class RootCore extends RootCoreAPI implements Listener {
         saveResource("kitRPList.yml");
         saveResource("vipList.yml");
         shopCfg = new Config(new File(getDataFolder(), "kitRPList.yml"));
-        rankCfg = new Config(new File(getDataFolder(), "vipList.yml"));
     }
 
     private void initCommands(){

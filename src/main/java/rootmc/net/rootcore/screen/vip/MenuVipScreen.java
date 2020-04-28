@@ -26,11 +26,11 @@ public class MenuVipScreen extends FormWindowSimple implements Screen {
             case 0:
                 player.showFormWindow(new VipHelpScreen());
                 break;
-            case 1:
+            case 1: //todo: query with luckperm database =))
+                player.showFormWindow(this);
                 break;
             case 2:
-                int rp = RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId());
-                player.showFormWindow(new ListVipScreen(rp));
+                player.showFormWindow(new ListVipScreen());
                 break;
         }
     }

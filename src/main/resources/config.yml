@@ -1,4 +1,11 @@
 # Note: You need to create the database before setting this up.
+# Mỗi server đều phải có
+# NPC: Sự kiện /event
+# NPC: Shop RootPoint /shoprp
+# NPC: Hướng dẫn /info
+# NPC: Hệ thống VIP /vip
+# NPC: Nạp thẻ - Donate /rp
+
 mysql:
   ip: rootmc.net
   port: 3306
@@ -9,6 +16,8 @@ mysql:
 discount: 100
 
 fix: false
+
+update: "Prison update bla bla"
 
 gameType: "§l§4Lối chơi: SkyBlock §flà lối chơi sinh tồn và xây dựng trên một hòn đảo nổi. Đòi hỏi kỹ năng và kinh nghiệm sinh tồn pro của bạn. Xây dựng đảo, nâng cấp và phát triển thức ăn."
 

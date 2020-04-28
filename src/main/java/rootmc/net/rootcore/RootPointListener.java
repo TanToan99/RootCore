@@ -12,6 +12,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.network.protocol.LoginPacket;
 import cn.nukkit.scheduler.Task;
 import me.onebone.economyapi.EconomyAPI;
+import rootmc.net.rootcore.screen.NoticeScreen;
 import rootmc.net.rootcore.screen.info.screen.GameType;
 import rootmc.net.rootcore.screen.Screen;
 
@@ -57,6 +58,12 @@ public class RootPointListener implements Listener {
                 plugin.getRootPointManager().createAccount(event.getPlayer());
             }
         });
+        plugin.getServer().getScheduler().scheduleDelayedTask(new Task() {
+            @Override
+            public void onRun(int i) {
+                event.getPlayer().showFormWindow(new NoticeScreen("§c§lRoot§r§lNetworκ §r® Update",RootCore.get().getConfig().getString("update")));
+            }
+        }, 80);
     }
 
     //fix and me commmand

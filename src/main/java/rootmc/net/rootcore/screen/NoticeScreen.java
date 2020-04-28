@@ -4,12 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.element.ElementLabel;
 import cn.nukkit.form.window.FormWindowCustom;
+import cn.nukkit.form.window.FormWindowSimple;
 import rootmc.net.rootcore.RootCore;
 
-public class EventScreen  extends FormWindowCustom implements Screen {
-    public EventScreen() {
-        super("§c§lRoot§r§lNetworκ §r® Sự kiện");
-        addElement(new ElementLabel(RootCore.get().getConfig().getString("events")));
+public class NoticeScreen extends FormWindowSimple implements Screen {
+    public NoticeScreen(String title,String content) {
+        super(title,content);
     }
 
     @Override

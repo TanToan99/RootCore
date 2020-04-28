@@ -9,7 +9,9 @@ import cn.nukkit.form.element.ElementStepSlider;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.utils.ConfigSection;
 import rootmc.net.rootcore.RootCore;
+import rootmc.net.rootcore.data.RankData;
 import rootmc.net.rootcore.module.RootPointManager;
+import rootmc.net.rootcore.module.VIPManager;
 import rootmc.net.rootcore.screen.Screen;
 import rootmc.net.rootcore.screen.vip.MenuVipScreen;
 
@@ -18,17 +20,15 @@ import java.util.UUID;
 
 public class BuySelectRankScreen extends FormWindowCustom implements Screen {
 
-    private String key = "";
-
-    public BuySelectRankScreen(Integer rp, String key) {
-        super(RootCore.rankCfg.getSection(key).getString("customname"));
-        addElement(new ElementLabel("§lRPoint bạn có §f" + rp + "RP\n" + RootCore.rankCfg.getSection(key).getString("des")));
-        if (RootCore.rankCfg.getSection(key).getInt("rpvv") == -1) {
-            addElement(new ElementStepSlider("◊ §l§eXác nhận", Arrays.asList("Không", "Mua 30 ngày")));
-        } else {
-            addElement(new ElementStepSlider("◊ §l§eXác nhận", Arrays.asList("Không", "Mua 30 ngày", "Mua vĩnh viễn")));
+    public BuySelectRankScreen(String customName) { //Integer rp, todo: rewrite rp manager
+        super(customName);
+        RankData rankData = RootCore.get().getVipManager().getRankByCustomName(customName);
+        addElement(new ElementLabel(rankData.getDes()));
+        if (rankData.getRpvv() < 0){
+            addElement(new ElementStepSlider("◊ §l§eXác nhận§f", Arrays.asList("Không", "Mua 30 ngày")));
+        }else{
+            addElement(new ElementStepSlider("◊ §l§eXác nhận§f", Arrays.asList("Không", "Mua 30 ngày", "Mua vĩnh viễn")));
         }
-        this.key = key;
     }
 
     @Override
@@ -37,25 +37,36 @@ public class BuySelectRankScreen extends FormWindowCustom implements Screen {
         int idResponse = getResponse().getStepSliderResponse(1).getElementID();
         switch (idResponse) {
             case 0:
-                int rpp = RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId());
-                player.showFormWindow(new ListVipScreen(rpp));
+                player.showFormWindow(new ListVipScreen());
                 break;
             case 1:
-                UUID uuid = player.getUniqueId();
-                ConfigSection cSection = RootCore.rankCfg.getSection(key);
-                int rp = cSection.getInt("rp");
-                if (RootCore.get().getRootPointManager().reduceRootPoint(uuid, rp, true) == 1) {
-                    player.sendMessage("Mua rank thành công ");
-                    //todo: rewrite
-                    Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " clear");
-                    Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " parent addtemp " + key + " " + cSection.getInt("day") + "d");
-                    RootCore.get().getProvider().add_transaction(player.getName(), "SB_RANK", key + " - " + cSection.getInt("day"), rp, RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
+                String customName = getTitle();
+                RankData rankData = RootCore.get().getVipManager().getRankByCustomName(customName);
+                if (RootCore.get().getRootPointManager().reduceRootPoint(player.getUniqueId(), rankData.getRp(), true) == 1) {
+                    Server.getInstance().broadcastMessage("§r[§l§4Root§r] §aNgười chơi §f" + player.getName() + "§a đã mua rank " + rankData.getCusName() + " §a 30 ngày !");
+                    //Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " clear");
+                    Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " parent addtemp " + rankData.getKey() + " " + rankData.getDay() + "d");
+                    RootCore.get().getProvider().add_transaction(player.getName(), "SB_RANK", rankData.getKey() + " - " + rankData.getDay(), rankData.getRp(), RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
                 } else {
-                    player.showFormWindow(new BuyFailScreen(key));
+                    player.showFormWindow(new BuyFailScreen("Bạn không có đủ rp để mua rank, nạp thẻ bằng lệnh /rp và thử lại!"));
                 }
                 break;
             case 2:
-                //TODO: write
+                String customNamea = getTitle();
+                VIPManager vipManager = RootCore.get().getVipManager();
+                RankData rankDataa = vipManager.getRankByCustomName(customNamea);
+                if(!vipManager.canBuyLevel(player.getName(), rankDataa.getLevel())){
+                    player.showFormWindow(new BuyFailScreen("Bạn cần phải mua từ rank Vĩnh Viễn : §6§lVIP §f-> §6§lVIP§c+ §f-> §b§lKING §f-> §b§lKING§c+ theo thứ tự !"));
+                    return;
+                }
+                if (RootCore.get().getRootPointManager().reduceRootPoint(player.getUniqueId(), rankDataa.getRpvv(), true) == 1) {
+                    vipManager.writeData(player.getName(), rankDataa.getLevel()); //if error -> dont ask me :))
+                    Server.getInstance().broadcastMessage("§r[§l§4Root§r] §aNgười chơi §f" + player.getName() + "§a đã mua rank " + rankDataa.getCusName() + " §a Vĩnh Viễn !");
+                    Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " parent set " + rankDataa.getKey());
+                    RootCore.get().getProvider().add_transaction(player.getName(), "SB_RANK", rankDataa.getKey() + " - VV", rankDataa.getRpvv(), RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
+                } else {
+                    player.showFormWindow(new BuyFailScreen("Bạn không có đủ rp để mua rank, nạp thẻ bằng lệnh /rp và thử lại!"));
+                }
                 break;
         }
     }
