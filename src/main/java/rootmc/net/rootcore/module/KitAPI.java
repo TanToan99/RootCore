@@ -4,7 +4,7 @@ import cn.nukkit.utils.ConfigSection;
 import rootmc.net.rootcore.RootCore;
 
 public abstract class KitAPI {
-
+    //todo: rewrite kit api
     // Getting price and applying discount
     public static int getPrice(String categoryId, String key) {
         ConfigSection itemSection = RootCore.shopCfg.getSection(categoryId).getSection("kits").getSection(key);

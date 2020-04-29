@@ -12,7 +12,6 @@ import java.util.UUID;
 public class MysqlProvider implements Provider {
 
     private Connection connection;
-    private LinkedHashMap<String, Integer> data = new LinkedHashMap<String, Integer>();
     private String database;
 
     @Override

@@ -1,9 +1,9 @@
 package rootmc.net.rootcore.screen.payment;
 
+import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.window.FormWindowSimple;
-import rootmc.net.rootcore.screen.MenuScreen;
 import rootmc.net.rootcore.screen.Screen;
 
 public class PaymentMethodScreen extends FormWindowSimple implements Screen {
@@ -24,7 +24,12 @@ public class PaymentMethodScreen extends FormWindowSimple implements Screen {
         } else if (clickedButtonId == 1) {
             event.getPlayer().showFormWindow(new CKPaymentInfoScreen());
         } else {
-            event.getPlayer().showFormWindow(new MenuScreen(event.getPlayer().getUniqueId()));
+           // event.getPlayer().showFormWindow(new MenuScreen(event.getPlayer().getUniqueId()));
         }
+    }
+
+    @Override
+    public void onClose(Player player) {
+
     }
 }

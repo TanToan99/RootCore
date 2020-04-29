@@ -1,5 +1,6 @@
 package rootmc.net.rootcore.screen.shop;
 
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.element.ElementButton;
@@ -32,22 +33,20 @@ public class BuyKitSelectorScreen extends FormWindowSimple implements Screen {
             String des = KitAPI.getDes(categoryId, key);
             addButton(new BuyKitButton(key, customname, url, price, des));
         }
-
-        addButton(new ElementButton("Trở về", new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_URL, "https://cdn1.iconfinder.com/data/icons/social-messaging-ui-color-round-1/254000/26-512.png")));
-        // If there is only back button
         if (getButtons().size() == 1)
-            setContent("Không có cái gì để mua ");
+            setContent("Không có cái gì để mua, vote del op khánh ");
     }
 
     public void onResponse(PlayerFormRespondedEvent event) {
-        // If back button pressed
         int rp = RootCore.get().getRootPointManager().myRootPoint(event.getPlayer().getUniqueId());
-        if (!(getResponse().getClickedButton() instanceof BuyKitButton)) {
-            event.getPlayer().showFormWindow(new BuyCategoriesScreen(rp));
-            return;
-        }
         BuyKitButton button = (BuyKitButton) getResponse().getClickedButton();
         event.getPlayer().showFormWindow(new BuyScreen(button.getKey(), button.getCustomName(), button.getPrice(), rp, button.getDes()));
+    }
+
+    @Override
+    public void onClose(Player player) {
+        int rp = RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId());
+        player.showFormWindow(new BuyCategoriesScreen(rp));
     }
 
 }
