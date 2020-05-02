@@ -13,7 +13,6 @@ public class PaymentMethodScreen extends FormWindowSimple implements Screen {
                 "§f» §l§eThẻ cào thì tiện lợi nhưng nạp chuyển khoản thì lợi hơn nhiều nha :)");
         addButton(new ElementButton("§l§2Nạp thẻ cào"));
         addButton(new ElementButton("§l§2Nạp chuyển khoản §4(x1.5)"));
-        addButton(new ElementButton("Trở lại"));
     }
 
     @Override
@@ -23,8 +22,6 @@ public class PaymentMethodScreen extends FormWindowSimple implements Screen {
             event.getPlayer().showFormWindow(new NapTheScreen());
         } else if (clickedButtonId == 1) {
             event.getPlayer().showFormWindow(new CKPaymentInfoScreen());
-        } else {
-           // event.getPlayer().showFormWindow(new MenuScreen(event.getPlayer().getUniqueId()));
         }
     }
 
