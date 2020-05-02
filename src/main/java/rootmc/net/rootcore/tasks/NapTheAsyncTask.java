@@ -96,13 +96,20 @@ public class NapTheAsyncTask extends AsyncTask {
                 return "2";
             case ("Vinaphone"):
                 return "3";
+            case ("Zing"):
+                return "4";
+            case ("Gate(FPT)"):
+                return "5";
+            case ("VCoin"):
+                return "6";
         }
         return null;
     }
 }
 
 class Reponse {
-    public int amount;
+    public String amount;
     public int code;
-    public Integer msg;
+    public String msg;
+    public String trans_id;
 }

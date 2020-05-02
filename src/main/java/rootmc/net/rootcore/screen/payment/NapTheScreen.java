@@ -27,7 +27,7 @@ public class NapTheScreen extends FormWindowCustom implements Screen {
                 "   §f❀ §e200k §f= 200 §eRP\n\n" +
                 "   §f❀ §e500k §f= 500 §eRP\n\n" +
                 " §f» §eLưu ý:§f Chọn sai mệnh giá có thể mất thẻ server không chịu trách nhiệm \n"));
-        addElement(new ElementDropdown(" » §eChọn nhà mạng", Arrays.asList("Viettel", "Mobifone", "Vinaphone")));
+        addElement(new ElementDropdown(" » §eChọn nhà mạng§7(kéo xuống dưới có nhiều loại thẻ)", Arrays.asList("Viettel", "Mobifone", "Vinaphone","Zing","Gate(FPT)","VCoin")));
         addElement(new ElementDropdown(" » §eChọn mệnh giá §7(kéo xuống dưới có nhiều mệnh giá)", Arrays.asList("10000", "20000", "50000", "100000", "200000", "500000")));
         addElement(new ElementInput(" » §eNhập Seri", "Nhập số seri ở đây"));
         addElement(new ElementInput(" » §eNhập Pin", "Nhập số Pin ở đây"));
