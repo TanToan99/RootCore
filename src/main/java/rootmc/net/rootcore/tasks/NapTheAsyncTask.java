@@ -53,7 +53,7 @@ public class NapTheAsyncTask extends AsyncTask {
         fields.put("data_sign", key);
         String requests = RequestUtils.createRequests(fields);
         String get = RequestUtils.post("http://api.napthengay.com/v2/",requests);
-        setResult(new String[]{get, menhgia,data.get(0)});
+        setResult(new String[]{get, menhgia,data.get(0),cardType,seri,pincode});
     }
 
     public String convertByteToHex1(byte[] data) {
@@ -79,8 +79,15 @@ public class NapTheAsyncTask extends AsyncTask {
                 player.sendMessage("§r[§l§4Root§r§lPoint§r] " + data.msg);
                 server.broadcastMessage("§r[§l§4Root§r§lPoint§r] §aNgười chơi §f" + playerName + " §ađã nạp thành công thẻ cào §f" + R[1] + "VND. §aCám ơn bạn đã ủng hộ server !");
                 int rp = RootCore.get().getConfig().getInt("discount") * Integer.parseInt(R[1]) / 100000;
+                switch (R[3]){
+                    case "4":
+                    case "5":
+                    case "6":
+                        rp *= 1.2;
+                        break;
+                }
                 RootCore.get().getRootPointManager().addRootPoint(player, rp);
-                //RootCore.get().getProvider().add_transaction(playerName, "TECOM_CARD", R[2] + " - Seri: " + data.seri + " - pin: " + data.pin + " - price: " + R[1], rp, RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
+                RootCore.get().getProvider().add_transaction(playerName, "TECOM_CARD", R[2] + " - Seri: " + R[4] + " - pin: " + R[5] + " - price: " + R[1], rp, RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
             } else {
                 player.sendMessage("§r[§l§4Root§r§lPoint§r] Nạp thất bại, vui lòng thử lại");
                 player.sendMessage("§r[§l§4Root§r§lPoint§r] " + data.msg);
