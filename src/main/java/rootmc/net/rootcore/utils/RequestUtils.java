@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public class RequestUtils {
         try {
             RequestUtils.installAllTrustManager();
             URL url = new URL(link);
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setInstanceFollowRedirects(true);
@@ -88,7 +89,7 @@ public class RequestUtils {
         try {
             RequestUtils.installAllTrustManager();
             URL url = new URL(link);
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod("GET");
