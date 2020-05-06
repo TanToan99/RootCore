@@ -62,8 +62,8 @@ public class RequestUtils {
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("Content-length", String.valueOf(data.length()));
             conn.setUseCaches(false);
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(12000); //set time out
+            conn.setReadTimeout(12000);
             PrintWriter post = new PrintWriter(conn.getOutputStream());
             post.print(data);
             post.close();
