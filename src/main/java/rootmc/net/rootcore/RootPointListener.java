@@ -13,7 +13,6 @@ import cn.nukkit.network.protocol.LoginPacket;
 import cn.nukkit.scheduler.Task;
 import me.onebone.economyapi.EconomyAPI;
 import rootmc.net.rootcore.screen.NoticeScreen;
-import rootmc.net.rootcore.screen.info.screen.GameType;
 import rootmc.net.rootcore.screen.Screen;
 
 import java.util.Map;
@@ -21,34 +20,41 @@ import java.util.UUID;
 
 public class RootPointListener implements Listener {
 
-    private RootCore plugin;
-    
-    RootPointListener(RootCore plugin){
+    private final RootCore plugin;
+    private final boolean logupdate;
+
+    RootPointListener(RootCore plugin) {
         this.plugin = plugin;
+        this.logupdate = plugin.getConfig().getBoolean("logupdate", false);
     }
-    
+
+    public boolean isRepairable(Item item) {
+        return item instanceof ItemTool || item instanceof ItemArmor;
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
     public void onFormResponse(PlayerFormRespondedEvent event) {
         if (!(event.getWindow() instanceof Screen)) return;
-        if (event.wasClosed()){
-            ((Screen)event.getWindow()).onClose(event.getPlayer());
+        if (event.wasClosed()) {
+            ((Screen) event.getWindow()).onClose(event.getPlayer());
             return;
         }
         if (event.getResponse() == null) return;
-        ((Screen)event.getWindow()).onResponse(event);
+        ((Screen) event.getWindow()).onResponse(event);
     }
 
     @EventHandler
-    public void onJoin(PlayerQuitEvent event) {
+    public void onQuit(PlayerQuitEvent event) {
         event.setQuitMessage("");
     }
 
     @EventHandler
-    public void action(DataPacketReceiveEvent e) {
+    public void fixName(DataPacketReceiveEvent e) {
         if (e.getPacket() instanceof LoginPacket) {
-            ((LoginPacket)e.getPacket()).username = ((LoginPacket)e.getPacket()).username.replaceAll(" ", "_");
+            ((LoginPacket) e.getPacket()).username = ((LoginPacket) e.getPacket()).username.replaceAll(" ", "_");
         }
     }
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         event.setJoinMessage("");
@@ -58,23 +64,25 @@ public class RootPointListener implements Listener {
                 plugin.getRootPointManager().createAccount(event.getPlayer());
             }
         });
-        plugin.getServer().getScheduler().scheduleDelayedTask(new Task() {
-            @Override
-            public void onRun(int i) {
-                event.getPlayer().showFormWindow(new NoticeScreen("§c§lRoot§r§lNetworκ §r® Update",RootCore.get().getConfig().getString("update")));
-            }
-        }, 40); //fix form other does not work
+        if (logupdate) {
+            plugin.getServer().getScheduler().scheduleDelayedTask(new Task() {
+                @Override
+                public void onRun(int i) {
+                    event.getPlayer().showFormWindow(new NoticeScreen("§c§lRoot§r§lNetworκ §r® Update", RootCore.get().getConfig().getString("update")));
+                }
+            }, 30); //fix form other does not work
+        }
     }
 
     //fix and me commmand
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onCommand(PlayerCommandPreprocessEvent event){
+    public void onCommand(PlayerCommandPreprocessEvent event) {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
         String[] args = event.getMessage().split(" ");
-        switch (args[0]){
+        switch (args[0]) {
             case "/fix":
-                if (plugin.getConfig().getBoolean("fix",false)) {
+                if (plugin.getConfig().getBoolean("fix", false)) {
                     if (args.length != 2) {
                         player.sendMessage("◊ §cBạn phải sử dụng đúng lệnh §f/fix <hand|all> ");
                         player.sendMessage("◊ §cSố tiền phí /fix sẽ tùy thuộc vào rank của bạn ");
@@ -169,7 +177,7 @@ public class RootPointListener implements Listener {
                             player.sendMessage("◊ §cSố tiền phí /fix sẽ tùy thuộc vào rank của bạn ");
                             return;
                     }
-                }else{
+                } else {
                     Item item = player.getInventory().getItemInHand();
                     if (!isRepairable(item)) {
                         player.sendMessage("◊ §eVật phẩm bạn cầm không khả dụng để /fix, cầm trên tay và thử lại ");
@@ -189,23 +197,23 @@ public class RootPointListener implements Listener {
                 if (player.hasPermission("nukkit.command.me") && !player.isOp()) {
                     UUID uuid = player.getUniqueId();
                     long current = System.currentTimeMillis();
-                    if(plugin.commandMeCache.containsKey(uuid)){
+                    if (plugin.commandMeCache.containsKey(uuid)) {
                         long end = plugin.commandMeCache.get(player.getUniqueId());
-                        if (current >= end){
+                        if (current >= end) {
                             plugin.commandMeCache.remove(player.getUniqueId());
-                        }else{
+                        } else {
                             event.setCancelled();
-                            player.sendMessage("◊ §cBạn còn "+ (end - current) / 1000 +" giây nữa để sử dụng lại lệnh này, rank càng cao thời gian càng thấp !");
+                            player.sendMessage("◊ §cBạn còn " + (end - current) / 1000 + " giây nữa để sử dụng lại lệnh này, rank càng cao thời gian càng thấp !");
                         }
                     }
                     int time = 1;
-                    if (player.hasPermission("rootcore.rank.king+")){
+                    if (player.hasPermission("rootcore.rank.king+")) {
                         time = 10 * 60;
-                    }else if (player.hasPermission("rootcore.rank.king")){
+                    } else if (player.hasPermission("rootcore.rank.king")) {
                         time = 20 * 60;
-                    }else if (player.hasPermission("rootcore.rank.vip+")){
+                    } else if (player.hasPermission("rootcore.rank.vip+")) {
                         time = 30 * 60;
-                    }else{
+                    } else {
                         player.sendMessage("◊ §cBạn phải ở rank vip+ trở lên mới sử dụng được lệnh này ");
                         return;
                     }
@@ -215,17 +223,13 @@ public class RootPointListener implements Listener {
         }
     }
 
-    public boolean isRepairable(Item item) {
-        return item instanceof ItemTool || item instanceof ItemArmor;
-    }
-
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onchat(PlayerChatEvent event){
+    public void onchat(PlayerChatEvent event) {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
-        if(player.hasPermission("rootcore.rank.king") || player.hasPermission("rootcore.rank.king+") || player.hasPermission("rootcore.rank.vip+") || player.hasPermission("rootcore.rank.vip")){
+        if (player.hasPermission("rootcore.rank.king") || player.hasPermission("rootcore.rank.king+") || player.hasPermission("rootcore.rank.vip+") || player.hasPermission("rootcore.rank.vip")) {
             String itemName = player.getInventory().getItemInHand().getName();
-            event.setMessage(event.getMessage().replace("@xem","§b§l"+ itemName+"§r§f"));
+            event.setMessage(event.getMessage().replace("@xem", "§b§l" + itemName + "§r§f"));
         }
     }
     //TODO: rewrite full slot vip join

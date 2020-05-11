@@ -87,7 +87,7 @@ public class NapTheAsyncTask extends AsyncTask {
                         break;
                 }
                 RootCore.get().getRootPointManager().addRootPoint(player, rp);
-                RootCore.get().getProvider().add_transaction(playerName, "TECOM_CARD", R[2] + " - Seri: " + R[4] + " - pin: " + R[5] + " - price: " + R[1], rp, RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
+                RootCore.get().getProvider().add_transaction(player.getUniqueId(), "TECOM_CARD", R[2] + " - Seri: " + R[4] + " - pin: " + R[5] + " - price: " + R[1], rp, RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
             } else {
                 player.sendMessage("§r[§l§4Root§r§lPoint§r] Nạp thất bại, vui lòng thử lại");
                 player.sendMessage("§r[§l§4Root§r§lPoint§r] " + data.msg);

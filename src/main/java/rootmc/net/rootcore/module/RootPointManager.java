@@ -8,14 +8,13 @@ import rootmc.net.rootcore.event.AddRootPointEvent;
 import rootmc.net.rootcore.event.CreateAccountRPEvent;
 import rootmc.net.rootcore.event.ReduceRootPointEvent;
 import rootmc.net.rootcore.event.SetRootPointEvent;
-import rootmc.net.rootcore.provider.Provider;
 import rootmc.net.rootcore.screen.payment.TopRootPoint;
 
 import java.util.*;
 
 public class RootPointManager {
 
-    private RootCore plugin;
+    private final RootCore plugin;
 
     public static final int RET_NO_ACCOUNT = -3;
     public static final int RET_CANCELLED = -2;
@@ -23,61 +22,25 @@ public class RootPointManager {
     public static final int RET_SUCCESS = 1;
 
 
-    public RootPointManager(RootCore plugin){
+    public RootPointManager(RootCore plugin) {
         this.plugin = plugin;
     }
 
     public int reduceRootPoint(Player player, int amount) {
-        return this.reduceRootPoint(player, amount, false);
-    }
-
-    public int reduceRootPoint(Player player, int amount, boolean force) {
-        return this.reduceRootPoint(player.getUniqueId(), amount, force);
-    }
-
-    public int reduceRootPoint(IPlayer player, int amount) {
-        return this.reduceRootPoint(player, amount, false);
-    }
-
-    public int reduceRootPoint(IPlayer player, int amount, boolean force) {
-        return this.reduceRootPoint(player.getUniqueId(), amount, force);
-    }
-
-    public int reduceRootPoint(UUID id, int amount) {
-        return this.reduceRootPoint(id, amount, false);
-    }
-
-    public int reduceRootPoint(UUID id, int amount, boolean force) {
-        checkAndConvertLegacy(id);
-        return reduceRootPointInternal(id.toString(), amount, force);
-    }
-
-    public int reduceRootPoint(String id, int amount) {
-        return this.reduceRootPoint(id, amount, false);
-    }
-
-    public int reduceRootPoint(String id, int amount, boolean force) {
-        Optional<UUID> uuid = checkAndConvertLegacy(id);
-        return uuid.map(uuid1 -> reduceRootPoint(uuid1, amount, force))
-                .orElse(reduceRootPointInternal(id, amount, force));
-    }
-
-    private int reduceRootPointInternal(String id, int amount, boolean force) {
-        id = id.toLowerCase();
         if (amount < 0) {
             return RET_INVALID;
         }
 
-        ReduceRootPointEvent event = new ReduceRootPointEvent(id, amount);
+        ReduceRootPointEvent event = new ReduceRootPointEvent(player.getName(), amount);
         plugin.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled() || force) {
+        if (!event.isCancelled()) {
             amount = event.getAmount();
             int money;
-            if ((money = plugin.getProvider().getRootPoint(id)) != -1) {
+            if ((money = plugin.getProvider().getRootPoint(player.getUniqueId())) != -1) {
                 if (money - amount < 0) {
                     return RET_INVALID;
                 } else {
-                    plugin.getProvider().reduceRootPoint(id, amount);
+                    plugin.getProvider().reduceRootPoint(player.getUniqueId(), amount);
                     return RET_SUCCESS;
                 }
             } else {
@@ -87,173 +50,48 @@ public class RootPointManager {
         return RET_CANCELLED;
     }
 
-    public boolean hasAccount(IPlayer player) {
-        return hasAccount(player.getUniqueId());
+
+    public boolean hasAccount(UUID uuid) {
+        return plugin.getProvider().accountExists(uuid);
     }
 
-    public boolean hasAccount(UUID id) {
-        return hasAccount(id.toString());
-    }
-
-    public boolean hasAccount(String id) {
-        return plugin.getProvider().accountExists(checkAndConvertLegacy(id).map(UUID::toString).map(String::toLowerCase).orElse(id));
-    }
-
-
-    private void checkAndConvertLegacy(UUID uuid) {
-        IPlayer player = plugin.getServer().getOfflinePlayer(uuid);
-        if (player != null && player.getName() != null) {
-            checkAndConvertLegacy(uuid, player.getName());
-        }
-    }
-
-    private Optional<UUID> checkAndConvertLegacy(String id) {
-        Optional<UUID> uuid = plugin.getServer().lookupName(id);
-        uuid.ifPresent(uuid1 -> checkAndConvertLegacy(uuid1, id));
-        return uuid;
-    }
-
-    private void checkAndConvertLegacy(UUID uuid, String name) {
-        name = name.toLowerCase();
-        Provider provider = plugin.getProvider();
-        if (!provider.accountExists(name)) {
-            return;
-        }
-
-        if (provider.accountExists(uuid.toString())) {
-            provider.removeAccount(name);
-            return;
-        }
-
-        int money = provider.getRootPoint(name);
-        provider.createAccount(uuid.toString(), money);
-        provider.removeAccount(name);
-    }
-
-    //RootCore Process Function
     public boolean createAccount(Player player) {
-        return createAccount(player, 0);
-    }
-
-    public boolean createAccount(Player player, int defaultMoney) {
-        return this.createAccount(player, defaultMoney, false);
-    }
-
-    public boolean createAccount(Player player, int defaultMoney, boolean force) {
-        return this.createAccount(player.getUniqueId(), defaultMoney, force);
-    }
-
-    public boolean createAccount(IPlayer player) {
-        return this.createAccount(player, 0);
-    }
-
-    public boolean createAccount(IPlayer player, int defaultMoney) {
-        return this.createAccount(player, defaultMoney, false);
-    }
-
-    public boolean createAccount(IPlayer player, int defaultMoney, boolean force) {
-        return this.createAccount(player.getUniqueId(), defaultMoney, force);
-    }
-
-    public boolean createAccount(UUID id, int defaultMoney) {
-        return this.createAccount(id, defaultMoney, false);
-    }
-
-    public boolean createAccount(UUID id, int defaultMoney, boolean force) {
-        checkAndConvertLegacy(id);
-        return createAccount(id.toString(), defaultMoney, force);
-    }
-
-    public boolean createAccount(String id, int defaultMoney, boolean force) {
-        Optional<UUID> uuid = checkAndConvertLegacy(id);
-        return uuid.map(uuid1 -> createAccount(uuid1, defaultMoney, force))
-                .orElse(createAccountInternal(id, defaultMoney, force));
-    }
-
-
-    private boolean createAccountInternal(String id, int defaultMoney, boolean force) {
-        CreateAccountRPEvent event = new CreateAccountRPEvent(id, defaultMoney);
+        CreateAccountRPEvent event = new CreateAccountRPEvent(player.getName(), 0);
         plugin.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled() || force) {
-            return plugin.getProvider().createAccount(id, event.getDefaultRP());
+        if (!event.isCancelled()) {
+            return plugin.getProvider().createAccount(player, "ENG"); //todo: set lang follow ip location
         }
         return false;
     }
 
     public LinkedHashMap<String, Integer> getAllRootPoint() {
-        return plugin.getProvider().getAll();
+        return plugin.getProvider().getAllRP();
     }
 
     public int myRootPoint(Player player) {
         return this.myRootPoint(player.getUniqueId());
     }
 
-    public int myRootPoint(IPlayer player) {
-        return this.myRootPoint(player.getUniqueId());
+    public int myRootPoint(UUID uuid) {
+        return myRootPointInternal(uuid);
     }
 
-    public int myRootPoint(UUID id) {
-        checkAndConvertLegacy(id);
-        return myRootPointInternal(id.toString());
+    private int myRootPointInternal(UUID uuid) {
+        return plugin.getProvider().getRootPoint(uuid);
     }
 
-    public int myRootPoint(UUID uniqueId, String id) {
-        Optional<UUID> uuid = checkAndConvertLegacy(id);
-        return uuid.map(this::myRootPoint).orElse(myRootPointInternal(id));
-    }
-
-    private int myRootPointInternal(String id) {
-        return plugin.getProvider().getRootPoint(id.toLowerCase());
-    }
-
-    public int setRootPoint(Player player, int amount) {
-        return this.setRootPoint(player, amount, false);
-    }
-
-    public int setRootPoint(Player player, int amount, boolean force) {
-        return this.setRootPoint(player.getUniqueId(), amount, force);
-    }
-
-    public int setRootPoint(IPlayer player, int amount) {
-        return this.setRootPoint(player, amount, false);
-    }
-
-    public int setRootPoint(IPlayer player, int amount, boolean force) {
-        return this.setRootPoint(player.getUniqueId(), amount, force);
-    }
-
-    public int setRootPoint(UUID id, int amount) {
-        return setRootPoint(id, amount, false);
-    }
-
-    public int setRootPoint(UUID id, int amount, boolean force) {
-        checkAndConvertLegacy(id);
-        return setRootPointInternal(id.toString(), amount, force);
-    }
-
-    public int setRootPoint(String id, int amount) {
-        return this.setRootPoint(id, amount, false);
-    }
-
-    public int setRootPoint(String id, int amount, boolean force) {
-        Optional<UUID> uuid = checkAndConvertLegacy(id);
-        return uuid.map(uuid1 -> setRootPoint(uuid1, amount, force))
-                .orElse(setRootPointInternal(id, amount, force));
-    }
-
-    private int setRootPointInternal(String id, int amount, boolean force) {
-        id = id.toLowerCase();
+    private int setRootPoint(Player player, int amount) {
         if (amount < 0) {
             return RET_INVALID;
         }
 
-        SetRootPointEvent event = new SetRootPointEvent(id, amount);
+        SetRootPointEvent event = new SetRootPointEvent(player.getName(), amount);
         plugin.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled() || force) {
-            if (plugin.getProvider().accountExists(id)) {
+        if (!event.isCancelled()) {
+            if (plugin.getProvider().accountExists(player.getUniqueId())) {
                 amount = event.getAmount();
                 if (amount <= 500) {
-                    plugin.getProvider().setRootPoint(id, amount);
+                    plugin.getProvider().setRootPoint(player.getUniqueId(), amount);
                     return RET_SUCCESS;
                 } else {
                     return RET_INVALID;
@@ -266,54 +104,18 @@ public class RootPointManager {
     }
 
     public int addRootPoint(Player player, int amount) {
-        return this.addRootPoint(player, amount, false);
-    }
-
-    public int addRootPoint(Player player, int amount, boolean force) {
-        return this.addRootPoint(player.getUniqueId(), amount, force);
-    }
-
-    public int addRootPoint(IPlayer player, int amount) {
-        return this.addRootPoint(player, amount, false);
-    }
-
-    public int addRootPoint(IPlayer player, int amount, boolean force) {
-        return this.addRootPoint(player.getUniqueId(), amount, force);
-    }
-
-    public int addRootPoint(UUID id, int amount) {
-        return addRootPoint(id, amount, false);
-    }
-
-    public int addRootPoint(UUID id, int amount, boolean force) {
-        checkAndConvertLegacy(id);
-        return addRootPointInternal(id.toString(), amount, force);
-    }
-
-    public int addRootPoint(String id, int amount) {
-        return this.addRootPoint(id, amount, false);
-    }
-
-    public int addRootPoint(String id, int amount, boolean force) {
-        Optional<UUID> uuid = checkAndConvertLegacy(id);
-        return uuid.map(uuid1 -> addRootPoint(uuid1, amount, force))
-                .orElse(addRootPointInternal(id, amount, force));
-    }
-
-    private int addRootPointInternal(String id, int amount, boolean force) {
-        id = id.toLowerCase();
         if (amount < 0) {
             return RET_INVALID;
         }
-        AddRootPointEvent event = new AddRootPointEvent(id, amount);
+        AddRootPointEvent event = new AddRootPointEvent(player.getName(), amount);
         plugin.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled() || force) {
+        if (!event.isCancelled()) {
             int money;
-            if ((money = plugin.getProvider().getRootPoint(id)) != -1) {
+            if ((money = plugin.getProvider().getRootPoint(player.getUniqueId())) != -1) {
                 if (money + amount > 999999999) {
                     return RET_INVALID;
                 } else {
-                    plugin.getProvider().addRootPoint(id, amount);
+                    plugin.getProvider().addRootPoint(player.getUniqueId(), amount);
                     return RET_SUCCESS;
                 }
             } else {
@@ -334,7 +136,7 @@ public class RootPointManager {
             List<String> list = new LinkedList<>(rootpoint.keySet());
             list.sort((s1, s2) -> Double.compare(rootpoint.get(s2), rootpoint.get(s1)));
             output.append("§f☆ §cTop RootPoint §f- §cTrang §f").append(page).append("/").append((players.size() + 6) / 5).append(" §f☆\n\n");
-            output.append("§f❀ §bRootPoint của bạn :§f ").append(myRootPoint(player.getUniqueId(), player.getName())).append("\n\n");
+            output.append("§f❀ §bRootPoint của bạn :§f ").append(myRootPoint(player.getUniqueId())).append("\n\n");
             if (page == 1) {
                 double total = 0;
                 for (double val : rootpoint.values()) {
@@ -374,11 +176,5 @@ public class RootPointManager {
             return player.getName();
         }
         return possibleUuid;
-    }
-
-    public void saveAll() {
-        if (plugin.getProvider() != null) {
-            plugin.getProvider().save();
-        }
     }
 }

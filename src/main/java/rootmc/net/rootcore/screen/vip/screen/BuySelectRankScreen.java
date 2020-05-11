@@ -40,14 +40,14 @@ public class BuySelectRankScreen extends FormWindowCustom implements Screen {
                 VIPManager vipManagerr = RootCore.get().getVipManager();
                 String customName = getTitle();
                 RankData rankData = vipManagerr.getRankByCustomName(customName);
-                if (RootCore.get().getRootPointManager().reduceRootPoint(player.getUniqueId(), rankData.getRp(), true) == 1) {
+                if (RootCore.get().getRootPointManager().reduceRootPoint(player, rankData.getRp()) == 1) {
                     Server.getInstance().broadcastMessage("§r[§l§4Root§r] §aNgười chơi §f" + player.getName() + "§a đã mua rank " + rankData.getCusName() + " §a 30 ngày !");
                     Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " clear");
                     if (vipManagerr.hasRankF(player.getName())) {
                         Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " parent set " + vipManagerr.getrankF(player.getName()));
                     }
                     Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " parent addtemp " + rankData.getKey() + " " + rankData.getDay() + "d");
-                    RootCore.get().getProvider().add_transaction(player.getName(), "SB_RANK", rankData.getKey() + " - " + rankData.getDay(), rankData.getRp(), RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
+                    RootCore.get().getProvider().add_transaction(player.getUniqueId(), "SB_RANK", rankData.getKey() + " - " + rankData.getDay(), rankData.getRp(), RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
                 } else {
                     player.showFormWindow(new BuyFailScreen("Bạn không có đủ rp để mua rank, nạp thẻ bằng lệnh /rp và thử lại!"));
                 }
@@ -60,12 +60,12 @@ public class BuySelectRankScreen extends FormWindowCustom implements Screen {
                     player.showFormWindow(new BuyFailScreen("Bạn cần phải mua từ rank Vĩnh Viễn : §6§lVIP §f-> §6§lVIP§c+ §f-> §b§lKING §f-> §b§lKING§c+ theo thứ tự !"));
                     return;
                 }
-                if (RootCore.get().getRootPointManager().reduceRootPoint(player.getUniqueId(), rankDataa.getRpvv(), true) == 1) {
+                if (RootCore.get().getRootPointManager().reduceRootPoint(player, rankDataa.getRpvv()) == 1) {
                     vipManager.writeData(player.getName(), rankDataa.getLevel()); //if error -> dont ask me :))
                     Server.getInstance().broadcastMessage("§r[§l§4Root§r] §aNgười chơi §f" + player.getName() + "§a đã mua rank " + rankDataa.getCusName() + " §a Vĩnh Viễn !");
                     Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " clear");
                     Server.getInstance().dispatchCommand(new ConsoleCommandSender(), "lp user " + player.getName() + " parent set " + rankDataa.getKey());
-                    RootCore.get().getProvider().add_transaction(player.getName(), "SB_RANK", rankDataa.getKey() + " - VV", rankDataa.getRpvv(), RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
+                    RootCore.get().getProvider().add_transaction(player.getUniqueId(), "SB_RANK", rankDataa.getKey() + " - VV", rankDataa.getRpvv(), RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId()));
                 } else {
                     player.showFormWindow(new BuyFailScreen("Bạn không có đủ rp để mua rank, nạp thẻ bằng lệnh /rp và thử lại!"));
                 }

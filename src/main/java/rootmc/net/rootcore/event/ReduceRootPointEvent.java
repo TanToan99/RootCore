@@ -7,11 +7,11 @@ import cn.nukkit.event.HandlerList;
 public class ReduceRootPointEvent extends Event implements Cancellable {
     public static HandlerList handlerList = new HandlerList();
 
-    private String player;
+    private String playerName;
     private int amount;
 
-    public ReduceRootPointEvent(String player, int amount) {
-        this.player = player;
+    public ReduceRootPointEvent(String playerName, int amount) {
+        this.playerName = playerName;
         this.amount = amount;
     }
 
@@ -19,8 +19,8 @@ public class ReduceRootPointEvent extends Event implements Cancellable {
         return handlerList;
     }
 
-    public String getPlayer() {
-        return this.player;
+    public String getPlayerName() {
+        return this.playerName;
     }
 
     public int getAmount() {

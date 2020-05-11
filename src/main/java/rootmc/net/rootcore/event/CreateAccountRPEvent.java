@@ -7,11 +7,11 @@ import cn.nukkit.event.HandlerList;
 public class CreateAccountRPEvent extends Event implements Cancellable {
     public static HandlerList handlerList = new HandlerList();
 
-    private String player;
+    private String playerName;
     private int defaultRP;
 
-    public CreateAccountRPEvent(String player, int defaultRP) {
-        this.player = player;
+    public CreateAccountRPEvent(String playerName, int defaultRP) {
+        this.playerName = playerName;
         this.defaultRP = defaultRP;
     }
 
@@ -19,8 +19,8 @@ public class CreateAccountRPEvent extends Event implements Cancellable {
         return handlerList;
     }
 
-    public String getPlayer() {
-        return this.player;
+    public String getPlayerName() {
+        return this.playerName;
     }
 
     public int getDefaultRP() {

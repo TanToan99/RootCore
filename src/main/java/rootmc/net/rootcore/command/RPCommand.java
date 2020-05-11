@@ -37,7 +37,7 @@ public class RPCommand extends PluginCommand<Plugin> implements CommandExecutor 
                             sender.sendMessage("/rp give <tên> <số rp>");
                             return true;
                         }
-                        if(RootCore.get().getProvider().addRootPoint(player.getUniqueId().toString(),Integer.parseInt(args[2]))){
+                        if(RootCore.get().getProvider().addRootPoint(player.getUniqueId(),Integer.parseInt(args[2]))){
                             player.sendMessage("Bạn được cộng "+args[2]+"RP vào tài khoản");
                             sender.sendMessage("Cộng thành công ");
                         }
@@ -52,7 +52,7 @@ public class RPCommand extends PluginCommand<Plugin> implements CommandExecutor 
                             sender.sendMessage("/rp give <tên> <số rp>");
                             return true;
                         }
-                        if(RootCore.get().getProvider().reduceRootPoint(player1.getUniqueId().toString(),Integer.parseInt(args[2]))){
+                        if(RootCore.get().getProvider().reduceRootPoint(player1.getUniqueId(),Integer.parseInt(args[2]))){
                             player1.sendMessage("Bạn bị trừ "+args[2] +"RP vào tài khoản");
                             sender.sendMessage("Trừ thành công ");
                         }
@@ -67,7 +67,7 @@ public class RPCommand extends PluginCommand<Plugin> implements CommandExecutor 
                             sender.sendMessage("/rp give <tên> <số rp>");
                             return true;
                         }
-                        if(RootCore.get().getProvider().setRootPoint(player2.getUniqueId().toString(),Integer.parseInt(args[2]))){
+                        if(RootCore.get().getProvider().setRootPoint(player2.getUniqueId(),Integer.parseInt(args[2]))){
                             player2.sendMessage("Bạn được cộng "+args[2]+"RP vào tài khoản");
                             sender.sendMessage("Cộng thành công ");
                         }
