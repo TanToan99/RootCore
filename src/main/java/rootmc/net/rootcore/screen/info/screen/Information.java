@@ -16,7 +16,7 @@ public class Information extends FormWindowSimple implements Screen {
                 "» §bTên Tài Khoản  §f: " + player.getName()+"\n\n" +
                 "» §bRootPoint      §f: " + RootCore.get().getRootPointManager().myRootPoint(player.getUniqueId())+"RP\n\n" +
                 "» §bCoin           §f: "+ EconomyAPI.getInstance().myMoney(player)+"\n\n"+
-                "» §bMật khẩu cấp 2 §f: " + RootCore.get().getProvider().getPassLv2(player.getUniqueId().toString())+"\n\n" +
+                "» §bMật khẩu cấp 2 §f: " + RootCore.get().getProvider().getPassLv2(player.getUniqueId())+"\n\n" +
                 "» §bChú ý          §f: Mật khẩu cấp 2 để xác thực tính năng mới trong ứng dụng android của server, vui lòng không chia sẽ cho ai");
         addButton(new ElementButton("Đổi mật khẩu C2"));
     }

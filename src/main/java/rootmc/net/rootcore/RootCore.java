@@ -15,7 +15,6 @@ import java.util.*;
 public class RootCore extends RootCoreAPI implements Listener {
 
     private static RootCore instance;
-    private final HashMap<String, Class<?>> providerClass = new HashMap<>();
     public HashMap<UUID, Long> commandMeCache = new HashMap<>();
     public static Config shopCfg;
 
@@ -25,8 +24,6 @@ public class RootCore extends RootCoreAPI implements Listener {
             instance = this;
         }
         instance = this;
-
-        this.addProvider("mysql", MysqlProvider.class);
     }
 
     @Override
@@ -62,18 +59,8 @@ public class RootCore extends RootCoreAPI implements Listener {
         return instance;
     }
 
-    //Provider RootCore
-    public void addProvider(String name, Class<? extends Provider> providerClass) {
-        this.providerClass.put(name, providerClass);
-    }
-
     private void selectProvider() {
-        Class<?> providerClass = this.providerClass.get("mysql");
-
-        if (providerClass == null) {
-            this.getLogger().critical("Invalid data provider was given.");
-            return;
-        }
+        Class<?> providerClass = MysqlProvider.class;
         try {
             provider = (Provider) providerClass.newInstance();
             provider.init(this.getDataFolder());
@@ -82,6 +69,6 @@ public class RootCore extends RootCoreAPI implements Listener {
             return;
         }
         provider.open();
-        this.getLogger().notice("Data provider was set to: " + provider.getName());
+        this.getLogger().notice("Data provider was set to: MySQL");
     }
 }

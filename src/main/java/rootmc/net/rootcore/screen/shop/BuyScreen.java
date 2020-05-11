@@ -39,7 +39,7 @@ public class BuyScreen extends FormWindowCustom implements Screen {
                 Kit kit = Main.instance.getKit(key);
                 kit.addTo(player);
                 player.showFormWindow(new BuySuccessScreen());
-                RootCore.get().getProvider().add_transaction(player.getName(),"SB_SHOPRP","KIT: " + key, price, prp - price);
+                RootCore.get().getProvider().add_transaction(player.getUniqueId(),"SB_SHOPRP","KIT: " + key, price, prp - price);
             } else {
                 player.showFormWindow(new BuyFailScreen());
             }

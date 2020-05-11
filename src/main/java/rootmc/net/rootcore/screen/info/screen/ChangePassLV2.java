@@ -23,7 +23,7 @@ public class ChangePassLV2 extends FormWindowCustom implements Screen {
         String pass = getResponse().getInputResponse(1);
         String passrewrite = getResponse().getInputResponse(2);
         if (pass.equals(passrewrite) && pass.length() > 7){
-            if(RootCore.get().getProvider().setPassLv2(event.getPlayer().getUniqueId().toString(),pass)){
+            if(RootCore.get().getProvider().setPassLv2(event.getPlayer().getUniqueId(),pass)){
                 event.getPlayer().sendMessage("§r[§l§4Root§r] §aĐổi mật khẩu thành công !");
             }else{
                 event.getPlayer().sendMessage("§r[§l§4Root§r] §aĐổi mật khẩu thất bại, lỗi hệ thống xxx !");
