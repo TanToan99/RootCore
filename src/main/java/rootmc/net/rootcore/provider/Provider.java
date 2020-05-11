@@ -1,7 +1,10 @@
 package rootmc.net.rootcore.provider;
 
+import cn.nukkit.Player;
+
 import java.io.File;
 import java.util.LinkedHashMap;
+import java.util.UUID;
 
 public interface  Provider {
 
@@ -9,31 +12,27 @@ public interface  Provider {
 
     void open();
 
-    void add_transaction(String player, String type, String content, int amount, int surplus);
+    void add_transaction(UUID uuid, String type, String content, int amount, int surplus);
 
     void save();
 
-    void close();
+    boolean accountExists(UUID uuid);
 
-    boolean accountExists(String uuid);
+    boolean removeAccount(UUID uuid);
 
-    boolean removeAccount(String uuid);
+    boolean createAccount(Player player, String language);
 
-    boolean createAccount(String uuid, int defaultMoney);
+    boolean setRootPoint(UUID uuid, int amount);
 
-    boolean setRootPoint(String uuid, int amount);
+    boolean addRootPoint(UUID uuid, int amount);
 
-    boolean addRootPoint(String uuid, int amount);
+    boolean reduceRootPoint(UUID uuid, int amount);
 
-    boolean reduceRootPoint(String uuid, int amount);
+    int getRootPoint(UUID uuid);
 
-    int getRootPoint(String uuid);
+    String getPassLv2(UUID uuid);
 
-    String getPassLv2(String uuid);
+    boolean setPassLv2(UUID uuid, String pass);
 
-    boolean setPassLv2(String uuid, String pass);
-
-    LinkedHashMap<String, Integer> getAll();
-
-    String getName();
+    LinkedHashMap<String, Integer> getAllRP();
 }

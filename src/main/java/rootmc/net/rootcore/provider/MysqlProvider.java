@@ -1,6 +1,6 @@
 package rootmc.net.rootcore.provider;
 
-import cn.nukkit.Server;
+import cn.nukkit.Player;
 import cn.nukkit.utils.Config;
 import rootmc.net.rootcore.RootCore;
 
@@ -9,51 +9,43 @@ import java.sql.*;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
+import static rootmc.net.rootcore.provider.TableSet.*;
+
 public class MysqlProvider implements Provider {
 
     private Connection connection;
     private String database;
 
     @Override
-    public void init(File file) { }
+    public void init(File file) {
+    }
 
     @Override
     public void open() {
+        TableSet[] tableSets = {
+                LANGUAGE_TABLE,
+                ACCOUNT_TABLE,
+                TRANSACTION_TABLE
+        };
         RootCore plugin = RootCore.get();
         Config c = plugin.getConfig();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             database = c.getString("mysql.database");
-            String connectionUri = "jdbc:mysql://" + c.getString("mysql.ip") + ":" + c.getString("mysql.port") + "/" + c.getString("mysql.database")+"?autoReconnect=true";
+            String connectionUri = "jdbc:mysql://" + c.getString("mysql.ip") + ":" + c.getString("mysql.port") + "/" + c.getString("mysql.database") + "?autoReconnect=true";
             connection = DriverManager.getConnection(connectionUri, c.getString("mysql.username"), c.getString("mysql.password"));
             connection.setAutoCommit(true);
-            DatabaseMetaData dbm = null;
-            dbm = connection.getMetaData();
-            ResultSet tables = dbm.getTables(null, null, "rootaccount", null);
-            if (!tables.next()) {
-                String tableCreate = "CREATE TABLE rootaccount (" +
-                        "uuid VARCHAR(64) NOT NULL UNIQUE, " +
-                        "username VARCHAR(64) NOT NULL, " +
-                        "password VARCHAR(64) NULL, " +
-                        "rootpoint int default 0, " +
-                        "constraint rootpoint_pk primary key(uuid))";
-                Statement createTable = connection.createStatement();
-                createTable.executeUpdate(tableCreate);
+
+            Statement statement = connection.createStatement();
+            //OPTIMIZE
+            statement.executeUpdate(FOR_TABLE_OPTIMIZE_A.getQuery());
+            statement.executeUpdate(FOR_TABLE_OPTIMIZE_B.getQuery());
+
+            //ADD TABLE
+            for (TableSet set : tableSets) {
+                statement.executeUpdate(set.getQuery());
             }
-            tables = dbm.getTables(null, null, "account_transaction_history", null);
-            if (!tables.next()) {
-                String tableCreate = "CREATE TABLE account_transaction_history(" +
-                        "id int(11) AUTO_INCREMENT, " +
-                        "username VARCHAR(64) NOT NULL, " +
-                        "transactiontype VARCHAR(225) NOT NULL," +
-                        "content text NOT NULL," +
-                        "amount int(11) NOT NULL," +
-                        "surplus int(11) NOT NULL," +
-                        "datetime date NOT NULL," +
-                        "CONSTRAINT `id_pk` primary key(id))";
-                Statement createTable = connection.createStatement();
-                createTable.executeUpdate(tableCreate);
-            }
+            //todo: create default lang, i think not need now !
         } catch (SQLException ex) {
             ex.printStackTrace();
             System.out.println("It was not possible to establish a connection with the database.");
@@ -63,10 +55,10 @@ public class MysqlProvider implements Provider {
     }
 
     @Override
-    public void add_transaction(String player, String type, String content, int amount, int surplus) {
+    public void add_transaction(UUID uuid, String type, String content, int amount, int surplus) {
         try {
-            PreparedStatement newUserStatement = connection.prepareStatement("INSERT INTO " + database + ".account_transaction_history (username, transactiontype, content, amount, surplus, datetime) VALUES (?,?,?,?,?,?)");
-            newUserStatement.setString(1, player);
+            PreparedStatement newUserStatement = connection.prepareStatement(INSERT_TRANSACTION.getQuery());
+            newUserStatement.setString(1, uuid.toString());
             newUserStatement.setString(2, type);
             newUserStatement.setString(3, content);
             newUserStatement.setInt(4, amount);
@@ -79,21 +71,17 @@ public class MysqlProvider implements Provider {
     }
 
     @Override
-    public void save() { }
-
-    @Override
-    public void close() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void save() {
+        //todo: cache player + auto save 1mins
     }
 
     @Override
-    public boolean accountExists(String uuid) {
+    public boolean accountExists(UUID uuid) {
         try {
-            ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + database + ".rootaccount WHERE uuid='" + uuid + "'");
+
+            PreparedStatement statement = connection.prepareStatement(SELECT_ACCOUNT.getQuery());
+            statement.setString(1, uuid.toString());
+            ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return true;
             }
@@ -104,11 +92,11 @@ public class MysqlProvider implements Provider {
     }
 
     @Override
-    public boolean removeAccount(String uuid) {
+    public boolean removeAccount(UUID uuid) {
         if (accountExists(uuid)) {
             try {
-                PreparedStatement deleteStatement = connection.prepareStatement("UPDATE " + database + ".rootaccount SET rootpoint = 0 WHERE uuid=?");
-                deleteStatement.setString(1, uuid);
+                PreparedStatement deleteStatement = connection.prepareStatement(UPDATE_REMOVE_ACCOUNT.getQuery());
+                deleteStatement.setString(1, uuid.toString());
                 deleteStatement.execute();
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -119,13 +107,13 @@ public class MysqlProvider implements Provider {
     }
 
     @Override
-    public boolean createAccount(String uuid, int defaultrootpoint) {
-        if (!this.accountExists(uuid)) {
+    public boolean createAccount(Player player, String language) {
+        if (!this.accountExists(player.getUniqueId())) {
             try {
-                PreparedStatement newUserStatement = connection.prepareStatement("INSERT INTO " + database + ".rootaccount (uuid, username, rootpoint) VALUES (?,?,?)");
-                newUserStatement.setString(1, uuid);
-                newUserStatement.setString(2, Server.getInstance().getPlayer(UUID.fromString(uuid)).get().getName().toLowerCase());
-                newUserStatement.setInt(3, defaultrootpoint);
+                PreparedStatement newUserStatement = connection.prepareStatement(INSERT_ACCOUNT.getQuery());
+                newUserStatement.setString(1, player.getUniqueId().toString());
+                newUserStatement.setString(2, player.getName());
+                newUserStatement.setString(3, language);
                 newUserStatement.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -135,43 +123,51 @@ public class MysqlProvider implements Provider {
     }
 
     @Override
-    public boolean setRootPoint(String uuid, int amount) {
+    public boolean setRootPoint(UUID uuid, int amount) {
         try {
-            connection.createStatement().executeUpdate("UPDATE " + database + ".rootaccount SET rootpoint = " + amount +" WHERE uuid='" + uuid + "'");
-            return true;
+            PreparedStatement newUserStatement = connection.prepareStatement(UPDATE_RP_ACCOUNT.getQuery());
+            newUserStatement.setInt(1, amount);
+            newUserStatement.setString(2, uuid.toString());
+            newUserStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return false;
+        return true;
     }
 
 
     @Override
-    public boolean addRootPoint(String uuid, int amount) {
+    public boolean addRootPoint(UUID uuid, int amount) {
         try {
-            connection.createStatement().executeUpdate("UPDATE " + database + ".rootaccount SET rootpoint = rootpoint +" + amount +" WHERE uuid='" + uuid + "'");
-            return true;
+            PreparedStatement newUserStatement = connection.prepareStatement(UPDATE_ADDRP_ACCOUNT.getQuery());
+            newUserStatement.setInt(1, amount);
+            newUserStatement.setString(2, uuid.toString());
+            newUserStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return false;
+        return true;
     }
 
     @Override
-    public boolean reduceRootPoint(String uuid, int amount) {
+    public boolean reduceRootPoint(UUID uuid, int amount) {
         try {
-            connection.createStatement().executeUpdate("UPDATE " + database + ".rootaccount SET rootpoint = rootpoint -" + amount +" WHERE uuid='" + uuid + "'");
-            return true;
+            PreparedStatement newUserStatement = connection.prepareStatement(UPDATE_REDUCERP_ACCOUNT.getQuery());
+            newUserStatement.setInt(1, amount);
+            newUserStatement.setString(2, uuid.toString());
+            newUserStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return false;
+        return true;
     }
 
     @Override
-    public int getRootPoint(String uuid) {
+    public int getRootPoint(UUID uuid) {
         try {
-            ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + database + ".rootaccount WHERE uuid='" + uuid + "'");
+            PreparedStatement newUserStatement = connection.prepareStatement(SELECT_ACCOUNT.getQuery());
+            newUserStatement.setString(1, uuid.toString());
+            ResultSet resultSet = newUserStatement.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getInt("rootpoint");
             }
@@ -182,9 +178,11 @@ public class MysqlProvider implements Provider {
     }
 
     @Override
-    public String getPassLv2(String uuid) {
+    public String getPassLv2(UUID uuid) {
         try {
-            ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + database + ".rootaccount WHERE uuid='" + uuid + "'");
+            PreparedStatement newUserStatement = connection.prepareStatement(SELECT_ACCOUNT.getQuery());
+            newUserStatement.setString(1, uuid.toString());
+            ResultSet resultSet = newUserStatement.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getString("password");
             }
@@ -195,21 +193,23 @@ public class MysqlProvider implements Provider {
     }
 
     @Override
-    public boolean setPassLv2(String uuid, String pass) {
+    public boolean setPassLv2(UUID uuid, String pass) {
         try {
-            connection.createStatement().executeUpdate("UPDATE " + database + ".rootaccount SET password = " + pass +" WHERE uuid='" + uuid + "'");
-            return true;
+            PreparedStatement newUserStatement = connection.prepareStatement(UPDATE_PASSWD_ACCOUNT.getQuery());
+            newUserStatement.setString(1,pass);
+            newUserStatement.setString(2, uuid.toString());
+            newUserStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return false;
+        return true;
     }
 
     @Override
-    public LinkedHashMap<String, Integer> getAll() {
-        LinkedHashMap<String, Integer> all = new LinkedHashMap<String, Integer>();
+    public LinkedHashMap<String, Integer> getAllRP() {
+        LinkedHashMap<String, Integer> all = new LinkedHashMap<>();
         try {
-            ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + database + ".rootaccount");
+            ResultSet resultSet = connection.createStatement().executeQuery(SELECT_ALL_ACCOUNT.getQuery());
             while (resultSet.next()) {
                 all.put(resultSet.getString("username"), resultSet.getInt("rootpoint"));
             }
@@ -218,10 +218,4 @@ public class MysqlProvider implements Provider {
         }
         return all;
     }
-
-    @Override
-    public String getName() {
-        return "MySQL";
-    }
-
 }

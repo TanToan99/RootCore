@@ -17,6 +17,8 @@ discount: 100
 
 fix: false
 
+logupdate: false
+
 update: "Prison update bla bla"
 
 gameType: "§l§4Lối chơi: SkyBlock §flà lối chơi sinh tồn và xây dựng trên một hòn đảo nổi. Đòi hỏi kỹ năng và kinh nghiệm sinh tồn pro của bạn. Xây dựng đảo, nâng cấp và phát triển thức ăn."
